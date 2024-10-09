@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Paragon</title>
+  </head>
+  <body>
+    <h1>Paragon</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>LP</th>
+          <th>Nazwa</th>
+          <th>Ilość</th>
+          <th>Cena</th>
+          <th>Suma</th>
+          <th>Akcje</th>
+        </tr>
+      </thead>
+      <tbody id="receiptBody"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4" class="total">RAZEM</td>
+          <td id="totalPrice">0.00 zł</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <button id="addItemButton">Dodaj pozycję</button>
+
+    <dialog id="itemDialog">
+      <form id="itemForm">
+        <label>
+          Nazwa:
+          <input type="text" id="itemName" required />
+        </label>
+        <label>
+          Ilość:
+          <input type="number" id="itemQuantity" min="0.01" step="0.01" required />
+        </label>
+        <label>
+          Cena jednostkowa:
+          <input type="number" id="itemPrice" min="0.01" step="0.01" required />
+        </label>
+        <div class="button-wrapper">
+          <button type="button" id="cancelDialog">Anuluj</button>
+          <button type="submit">Zapisz</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
