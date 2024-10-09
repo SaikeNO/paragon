@@ -1,5 +1,5 @@
-let receipt = JSON.parse(localStorage.getItem("receiptItems")) || [];
 let editingItemIndex = null;
+let receipt;
 
 const receiptBody = document.getElementById("receiptBody");
 const totalPriceElement = document.getElementById("totalPrice");
@@ -11,16 +11,14 @@ const itemQuantity = document.getElementById("itemQuantity");
 const itemPrice = document.getElementById("itemPrice");
 const cancelDialogButton = document.getElementById("cancelDialog");
 
-const saveReceipt = () => {
-  localStorage.setItem("receiptItems", JSON.stringify(receipt));
-};
-
 const calculateTotal = () => {
   const total = receipt.reduce((sum, item) => sum + item.quantity * item.price, 0);
   totalPriceElement.textContent = `${total.toFixed(2)} zł`;
 };
 
-const renderReceipt = () => {
+const renderReceipt = async () => {
+  receipt = await fetchReceipts();
+
   receiptBody.innerHTML = "";
   receipt.forEach((item, index) => {
     const row = document.createElement("tr");
@@ -77,26 +75,27 @@ const closeDialog = () => {
   editingItemIndex = null;
 };
 
-const addItem = (event) => {
+const addEditItem = async (event) => {
   event.preventDefault();
 
-  const name = itemName.value;
-  const quantity = parseFloat(itemQuantity.value);
-  const price = parseFloat(itemPrice.value);
+  const item = {
+    name: itemName.value,
+    quantity: parseFloat(itemQuantity.value),
+    price: parseFloat(itemPrice.value),
+  };
 
-  if (!name || quantity <= 0 || price <= 0) {
+  if (!item.name || item.quantity <= 0 || item.price <= 0) {
     alert("Wprowadź poprawne dane.");
     return;
   }
 
   if (editingItemIndex !== null) {
-    receipt[editingItemIndex] = { name, quantity, price };
+    await updateReceipt(editingItemIndex, item);
   } else {
-    receipt.push({ name, quantity, price });
+    await addReceipt(item);
   }
 
-  saveReceipt();
-  renderReceipt();
+  await renderReceipt();
   closeDialog();
 };
 
@@ -106,19 +105,16 @@ const editItem = (index) => {
   openDialog(item);
 };
 
-const deleteItem = (index) => {
+const deleteItem = async (index) => {
   if (confirm("Czy na pewno chcesz usunąć tę pozycję?")) {
-    receipt.splice(index, 1);
-    saveReceipt();
-    renderReceipt();
+    await deleteReceipt(index);
+    await renderReceipt();
   }
 };
 
-addItemButton.addEventListener("click", () => {
-  openDialog();
-});
+addItemButton.addEventListener("click", () => openDialog());
 
-itemForm.addEventListener("submit", addItem);
+itemForm.addEventListener("submit", addEditItem);
 
 cancelDialogButton.addEventListener("click", closeDialog);
 
