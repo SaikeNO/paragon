@@ -33,7 +33,7 @@ app.post("/receipts", (req, res) => {
   const newItem = req.body;
   receipts.push(newItem);
   writeReceipts(receipts);
-  res.status(204);
+  res.status(204).json();
 });
 
 app.put("/receipts/:index", (req, res) => {
